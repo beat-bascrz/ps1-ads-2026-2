@@ -10,6 +10,12 @@ import br.bea.fatecfranca.api.repositories.CustomerRepository;
 import br.bea.fatecfranca.api.dtos.CustomerRequest;
 import br.bea.fatecfranca.api.entities.Customer;
 
+import br.bea.fatecfranca.api.validators.RequestValidator;
+import br.bea.fatecfranca.api.validators.StateValidator;
+import br.bea.fatecfranca.api.validators.UniqueDocumentValidator;
+import br.bea.fatecfranca.api.validators.UniqueEmailValidator;
+
+
 
 
 
@@ -18,6 +24,7 @@ public class CustomerService {
 
 
    private final CustomerRepository repository;
+   private final RequestValidator validator;
 
    private void copyToEntity(
        CustomerRequest request,
@@ -40,13 +47,25 @@ public class CustomerService {
 
    public CustomerService(CustomerRepository repository) {
        this.repository = repository;
+
+       RequestValidator emailValidator =
+           new UniqueEmailValidator(repository, null);
+
+
+       RequestValidator documentValidator =
+           new UniqueDocumentValidator(repository, emailValidator);
+
+
+       this.validator = new StateValidator(documentValidator);
+
    }
 
 
    public Customer create(CustomerRequest request) {
+
+    validator.validate(request, null);
+
        Customer customer = new Customer();
-
-
        copyToEntity(request, customer);
 
 
@@ -66,9 +85,10 @@ public class CustomerService {
 
 
    public Customer update(Long id, CustomerRequest request) {
+
+    validator.validate(request, id);
+
        Customer customer = new Customer();
-
-
        copyToEntity(request, customer);
 
 
