@@ -25,27 +25,35 @@ import br.bea.fatecfranca.api.dtos.UserRequest;
 import br.bea.fatecfranca.api.entities.User;
 import br.bea.fatecfranca.api.services.UserService;
 
+import br.bea.fatecfranca.api.dtos.LoginResponse;
+import br.bea.fatecfranca.api.services.TokenService;
+
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService service;
+    private final TokenService tokenService;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, TokenService tokenService) {
         this.service = service;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
-   public ResponseEntity<UserResponse> login(
+   public ResponseEntity<LoginResponse> login(
            @Valid @RequestBody LoginRequest request) {
 
-
        return service.authenticate(request)
-               .map(UserResponse::new)
-               .map(ResponseEntity::ok)
-               .orElseGet(() -> ResponseEntity
-                       .status(HttpStatus.UNAUTHORIZED)
-                       .build());
+           .map(user -> new LoginResponse(
+                   tokenService.generate(user),
+                   new UserResponse(user)))
+           .map(ResponseEntity::ok)
+           .orElseGet(() -> ResponseEntity
+                   .status(HttpStatus.UNAUTHORIZED)
+                   .build());
+
    }
 
 
