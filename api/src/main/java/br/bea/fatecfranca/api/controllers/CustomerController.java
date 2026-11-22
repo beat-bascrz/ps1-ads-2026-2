@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import br.bea.fatecfranca.api.entities.Customer;
-//import br.bea.fatecfranca.api.repositories.CustomerRepository;
+import br.bea.fatecfranca.api.dtos.CustomerRequest;
 import br.bea.fatecfranca.api.services.CustomerService;
+
 
 @RestController
 @RequestMapping("/customers")
@@ -45,10 +47,10 @@ public class CustomerController {
     //}
 
     @PostMapping
-    public ResponseEntity<Customer> create(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> create(@RequestBody CustomerRequest request) {
 
 
-        Customer savedCustomer = service.create(customer);
+        Customer savedCustomer = service.create(request);
 
 
         return ResponseEntity
@@ -108,7 +110,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<Customer> update(
             @PathVariable Long id,
-            @RequestBody Customer customer) {
+            @RequestBody CustomerRequest request) {
 
 
         if (!service.existsById(id)) {
@@ -116,10 +118,14 @@ public class CustomerController {
         }
 
 
-        customer.setId(id);
+        Customer customer = service.update(id, request);
 
 
-        return ResponseEntity.ok(service.update(customer));
+   customer.setId(id);
+
+
+   return ResponseEntity.ok(customer);
+
     }
 
 

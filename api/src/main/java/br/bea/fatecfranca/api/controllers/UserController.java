@@ -1,3 +1,4 @@
+
 package br.bea.fatecfranca.api.controllers;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.bea.fatecfranca.api.dtos.UserRequest;
 import br.bea.fatecfranca.api.entities.User;
 import br.bea.fatecfranca.api.services.UserService;
 
@@ -27,9 +29,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@RequestBody UserRequest request) {
 
-        User savedUser = service.create(user);
+        User savedUser = service.create(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -52,15 +54,15 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> update(
             @PathVariable Long id,
-            @RequestBody User user) {
+            @RequestBody UserRequest request) {
 
         if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        user.setId(id);
+        User user = service.update(id, request);
 
-        return ResponseEntity.ok(service.update(user));
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
