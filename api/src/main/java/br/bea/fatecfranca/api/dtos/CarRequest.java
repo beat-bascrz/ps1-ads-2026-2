@@ -22,9 +22,9 @@ public record CarRequest(
     @NotBlank(message = "A cor é obrigatória.")
     String color,
 
-    @NotNull(message = "O ano de fabricação é obrigatório.")
-    @Positive(message = "O ano de fabricação deve ser maior que zero.")
+    
     Long yearManufacture,
+
 
     @NotNull(message = "É necessário informar se o carro é importado.")
     Boolean imported,
