@@ -18,6 +18,8 @@ import br.bea.fatecfranca.api.dtos.UserRequest;
 import br.bea.fatecfranca.api.entities.User;
 import br.bea.fatecfranca.api.services.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -29,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody UserRequest request) {
+    public ResponseEntity<User> create(@Valid @RequestBody UserRequest request) {
 
         User savedUser = service.create(request);
 
@@ -54,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> update(
             @PathVariable Long id,
-            @RequestBody UserRequest request) {
+            @Valid @RequestBody UserRequest request) {
 
         if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();
