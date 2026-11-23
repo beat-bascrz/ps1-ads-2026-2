@@ -61,13 +61,13 @@ public class CarService {
         this.repository = repository;
         this.customerRepository = customerRepository;
 
-        RequestValidator<CarRequest> platesValidator =
-                new UniquePlatesValidator(repository, null);
+        RequestValidator<CarRequest> yearValidator =
+                new ManufactureYearValidator(null);
 
         RequestValidator<CarRequest> saleValidator =
-                new SaleDataValidator(platesValidator);
+                new SaleDataValidator(yearValidator);
 
-        this.validator = new ManufactureYearValidator(saleValidator);
+        this.validator = new UniquePlatesValidator(repository, saleValidator);
     }
 
     public Car create(CarRequest request) {
